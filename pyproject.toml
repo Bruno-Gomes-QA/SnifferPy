@@ -9,8 +9,14 @@ authors = [
     {name = "Bruno-Gomes-QA",email = "bruno.gomes.qa@gmail.com"}
 ]
 readme = "README.md"
-requires-python = ">=3.10.16"
+requires-python = ">=3.10.16,<4.0"
 dependencies = [
+    "pytest (>=8.3.5,<9.0.0)",
+    "pytest-cov (>=6.0.0,<7.0.0)",
+    "blue (>=0.9.1,<0.10.0)",
+    "isort (>=6.0.1,<7.0.0)",
+    "taskipy (>=1.14.1,<2.0.0)",
+    "python-dotenv (>=1.0.1,<2.0.0)"
 ]
 
 
