@@ -3,6 +3,19 @@ name = "snifferpy"
 packages = [
     { include = "snifferpy" }
 ]
+license = "CoffeeWare"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Operating System :: OS Independent",
+    "Natural Language :: Portuguese",
+]
 version = "0.1.0"
 description = ""
 authors = [
