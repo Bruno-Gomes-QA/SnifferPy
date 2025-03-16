@@ -11,15 +11,25 @@ authors = [
 readme = "README.md"
 requires-python = ">=3.10.16,<4.0"
 dependencies = [
-    "pytest (>=8.3.5,<9.0.0)",
-    "pytest-cov (>=6.0.0,<7.0.0)",
-    "blue (>=0.9.1,<0.10.0)",
-    "isort (>=6.0.1,<7.0.0)",
-    "taskipy (>=1.14.1,<2.0.0)",
-    "python-dotenv (>=1.0.1,<2.0.0)"
 ]
 
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.4"
+pytest-cov = "^6.0.0"
+blue = "^0.9.1"
+isort = "^5.13.2"
+taskipy = "^1.14.1"
+pytest-mysql = "^3.1.0"
+python-dotenv = "^1.0.1"
+
+[tool.poetry.group.doc.dependencies]
+mkdocstrings = "^0.29.0"
+mkdocs-material = "^9.6.8"
+mkdocstrings-python = "^1.16.5"
+jinja2 = "^3.1.6"
+
