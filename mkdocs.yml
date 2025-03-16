@@ -1,0 +1,24 @@
+site_name: SnifferPy
+repo_url: https://github.com/Bruno-Gomes-QA/SnifferPy
+repo_name: Bruno-Gomes-QA/SnifferPy
+site_description: Documentação do projeto SnifferPy
+site_author: Bruno Menezes Gomes
+edit_uri: tree/master/docs
+
+theme:
+  name: material
+  language: pt-BR
+  logo: assets/SNIFFERPY_.png
+  favicon: assets/SNIFFERPY_.png
+
+markdown_extensions:
+  - attr_list
+
+extra_css:
+  - stylesheets/extra.css
+
+plugins:
+- mkdocstrings:
+    handlers:
+      python:
+        paths: [snifferpy]

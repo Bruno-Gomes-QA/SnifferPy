@@ -57,5 +57,5 @@ line_length = 79
 lint = "blue . && isort ."
 docs = "mkdocs serve"
 pre_test = "task lint"
-test = "pytest -s -x --cov=datalchemy -vv"
+test = "pytest -s -x --cov=snifferpy -vv"
 post_test = "coverage html"
