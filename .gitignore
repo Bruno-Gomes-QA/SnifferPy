@@ -6,6 +6,9 @@ __pycache__/
 # C extensions
 *.so
 
+# Sniffing output reports
+snifferpy_calls.json
+snifferpy_log.txt
 # Distribution / packaging
 .Python
 build/

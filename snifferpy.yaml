@@ -1,0 +1,9 @@
+enable: True        # Enables/disables tracking globally
+log_level: "INFO"          # Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+log_to_file: false         # Enables/disables file logging
+log_filename: "snifferpy_log.txt"  # Log file name
+entry_value: True  # Capture actual argument values
+return_value: True  # Capture actual return values
+enable_log: True  # Enables or disables logging entirely
+enable_json: True  # Enables or disables JSON report generation
+ignored_modules: ["logging", "os", "threading", "builtins", "snifferpy", "posixpath", "genericpath"]
