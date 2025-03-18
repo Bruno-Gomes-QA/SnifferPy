@@ -5,6 +5,7 @@ import json
 import logging
 import inspect
 import yaml
+import psutil
 
 # Configuration file paths
 CONFIG_FILE = "snifferpy.yaml"
@@ -123,6 +124,19 @@ def is_ignored_module(frame):
 
     return False
 
+def get_call_stack():
+    """
+    Returns a list of function names representing the current call stack.
+
+    This function captures the names of all functions in the current execution stack,
+    allowing SnifferPy to track where a function was called from.
+
+    Returns:
+        list: List of function names in the current call stack.
+    """
+    stack = inspect.stack()
+    return [frame.function for frame in stack[1:]]  # Excludes `get_call_stack` itself
+
 def profile_function(frame, event, arg):
     """
     Intercepts and profiles all function calls in the user's code.
@@ -142,6 +156,9 @@ def profile_function(frame, event, arg):
     if not config.get("enable", True):  # If SnifferPy is disabled, ignore profiling
         return
 
+    func_name = None
+    calls_made = []
+
     if event == "call":
         func_name = frame.f_code.co_name
         func_module = frame.f_globals.get("__name__", "")
@@ -158,14 +175,44 @@ def profile_function(frame, event, arg):
 
         if not config.get("entry_value", False):
             args_dict = {key: type(value).__name__ for key, value in args_dict.items()}
+        process = psutil.Process(os.getpid())
+        start_time = time.perf_counter()
+        timestamp = time.strftime("%Y-%m-%d %H:%M:%S")  
+        cpu_start = cpu_start = process.cpu_times().user + process.cpu_times().system
+        mem_start = process.memory_info().rss
+        io_start = process.io_counters()  
+        call_stack = get_call_stack()
+        called_by = call_stack[-2] if len(call_stack) > 3 else call_stack[-1]  
+        if called_by and called_by in active_calls:
+            active_calls[called_by]["calls_made"].append(func_name)
 
-        active_calls[func_name] = (time.perf_counter(), args_dict)
+        active_calls[func_name] = {
+            "start_time": start_time,
+            "args_dict": args_dict,
+            "timestamp": timestamp,
+            "cpu_start": cpu_start,
+            "mem_start": mem_start,
+            "io_start": io_start,
+            "call_stack": call_stack,
+            "called_by": called_by,
+            "calls_made": calls_made,
+            "success": True,
+            "error_message": None
+        }
 
     elif event == "return":
         func_name = frame.f_code.co_name
         if func_name in active_calls:
-            start_time, args_dict = active_calls.pop(func_name, (None, None))
+
+            data = active_calls[func_name]
+
+            process = psutil.Process(os.getpid())
+            start_time, args_dict = data["start_time"], data["args_dict"]
             execution_time = time.perf_counter() - start_time if start_time else 0
+            execution_time = time.perf_counter() - data["start_time"]
+            cpu_end = process.cpu_times().user + process.cpu_times().system
+            mem_end = process.memory_info().rss
+            io_end = process.io_counters()
 
             return_value = arg if config.get("return_value", False) else type(arg).__name__
 
@@ -173,16 +220,57 @@ def profile_function(frame, event, arg):
                 "function": func_name,
                 "entry_args": args_dict,
                 "return_value": return_value,
-                "execution_time": execution_time
+                "execution_time": execution_time,
+                "timestamp": data["timestamp"],
+                "cpu_usage": round(cpu_end - data["cpu_start"], 6),
+                "memory_usage": f"{(mem_end - data['mem_start']) / (1024 * 1024):.2f}MB",
+                "io_operations": io_end.read_count - data["io_start"].read_count + io_end.write_count - data["io_start"].write_count,
+                "call_stack": data["call_stack"],
+                "called_by": data["called_by"],
+                "calls_made": data["calls_made"],
+                "success": data["success"],
+                "error_message": data["error_message"]
             }
             snifferpy_calls.append(call_entry)
 
             if config.get("enable_log", True):
                 logging.info(
-                    f"📌 Function: {func_name} | Args: {args_dict} | "
-                    f"Return: {return_value} | Time: {execution_time:.6f}s"
+                    f"📌 Function: {func_name} | Args: {data['args_dict']} | "
+                    f"Return: {return_value} | Time: {execution_time:.6f}s | "
+                    f"CPU: {call_entry['cpu_usage']}% | Memory: {call_entry['memory_usage']} | "
+                    f"IO Ops: {call_entry['io_operations']}"
                 )
+    elif event == "exception":
+        func_name = frame.f_code.co_name
+        if func_name in active_calls:
+            active_calls[func_name]["success"] = False
+            active_calls[func_name]["error_message"] = str(arg)
 
+            call_entry = {
+                "function": func_name,
+                "entry_args": active_calls[func_name]["args_dict"],
+                "return_value": None,
+                "execution_time": time.perf_counter() - active_calls[func_name]["start_time"],
+                "timestamp": active_calls[func_name]["timestamp"],
+                "cpu_usage": round(psutil.cpu_percent(interval=None) - active_calls[func_name]["cpu_start"], 2),
+                "memory_usage": f"{(psutil.Process(os.getpid()).memory_info().rss - active_calls[func_name]['mem_start']) / (1024 * 1024):.2f}MB",
+                "io_operations": (
+                    psutil.Process(os.getpid()).io_counters().read_count
+                    - active_calls[func_name]["io_start"].read_count
+                    + psutil.Process(os.getpid()).io_counters().write_count
+                    - active_calls[func_name]["io_start"].write_count
+                ),
+                "call_stack": active_calls[func_name]["call_stack"],
+                "called_by": active_calls[func_name]["called_by"],
+                "calls_made": active_calls[func_name]["calls_made"],
+                "success": False,
+                "error_message": active_calls[func_name]["error_message"]
+            }
+
+            snifferpy_calls.append(call_entry)
+            logging.error(f"❌ Function `{func_name}` failed: {active_calls[func_name]['error_message']}")
+
+            del active_calls[func_name]
 
 def start_sniffing():
     """
