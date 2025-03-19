@@ -24,6 +24,7 @@ authors = [
 readme = "README.md"
 requires-python = ">=3.10.16,<4.0"
 dependencies = [
+    "streamlit (>=1.43.2,<2.0.0)"
 ]
 
 [build-system]
@@ -59,3 +60,6 @@ docs = "mkdocs serve"
 pre_test = "task lint"
 test = "pytest -s -x --cov=snifferpy -vv"
 post_test = "coverage html"
+
+[tool.poetry.scripts]
+snifferpy = "snifferpy.cli:run_report"

@@ -9,6 +9,7 @@ __pycache__/
 # Sniffing output reports
 snifferpy_calls.json
 snifferpy_log.txt
+.streamlit/config.toml
 # Distribution / packaging
 .Python
 build/

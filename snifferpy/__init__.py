@@ -1,1 +1,1 @@
-from .sniffing import start_sniffing, stop_sniffing
+from .sniffing import Sniffing
