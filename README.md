@@ -1,8 +1,8 @@
-# SnifferPy 🐶  
+# SnifferPy 
 
 **SnifferPy** is a simple and efficient function profiler for tracking function calls, capturing arguments, return values, execution time, CPU, memory usage, and more. Ideal for debugging and performance analysis in Python.
 
-## 🚀 Installation  
+## Installation  
 
 To install SnifferPy, use `pip`:  
 
@@ -12,9 +12,9 @@ pip install snifferpy
 
 ---
 
-## 🛠️ **How to Use SnifferPy**  
+## **How to Use SnifferPy**  
 
-### **1️⃣ Start Sniffing with Context Manager**  
+### ** 1️ - Start Sniffing with Context Manager**  
 With the new context manager, you no longer need to manually start and stop sniffing!  
 
 ```python
@@ -33,15 +33,15 @@ with Sniffing():
 
 ---
 
-## 📝 **Expected Output**  
+##**Expected Output**  
 
-### **✅ Log Output (`snifferpy_log.txt`)**  
+### **Log Output (`snifferpy_log.txt`)**  
 ```
 2025-03-17 12:00:00 - [INFO] 📌 Function: add | Args: {'a': 3, 'b': 7} | Return: 10 | Time: 0.000001s | CPU: 0.001s | Memory: 1.2MB | IO Ops: 0
 2025-03-17 12:00:00 - [INFO] 📌 Function: greet | Args: {'name': 'Alice', 'age': 25} | Return: "Hello Alice, you are 25 years old!" | Time: 0.000002s | CPU: 0.001s | Memory: 1.1MB | IO Ops: 0
 ```
 
-### **✅ JSON Report (`snifferpy_calls.json`)**  
+### **JSON Report (`snifferpy_calls.json`)**  
 ```json
 [
     {
@@ -73,7 +73,7 @@ with Sniffing():
 
 ---
 
-## ⚙️ **Configuration (`snifferpy.yml`)**  
+## **Configuration (`snifferpy.yml`)**  
 
 SnifferPy allows configuring its behavior via a `snifferpy.yml` file.  
 
@@ -93,10 +93,10 @@ ignored_modules: ["logging", "os", "threading", "builtins", "snifferpy", "posixp
 
 ---
 
-## 📌 Upcoming Features  
+## Upcoming Features  
 
-- **📝 HTML Report Generation** – Generate an interactive HTML report for easier inspection of captured function calls.
-- **⏸️ Breakpoint Debugging** – Allow pausing execution at specific function calls for real-time debugging.
-- **🔎 Function-Specific Sniffing** – Enable sniffing only on specific functions using a decorator.
+- **HTML Report Generation** – Generate an interactive HTML report for easier inspection of captured function calls.
+- **Breakpoint Debugging** – Allow pausing execution at specific function calls for real-time debugging.
+- **Function-Specific Sniffing** – Enable sniffing only on specific functions using a decorator.
 
 ---
